@@ -1,0 +1,48 @@
+datasource db {
+  provider = "mongodb"
+  url      = env("DB_URL")
+}
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+model Client {
+  appointments Appointment[]
+  createdAt    DateTime      @default(now())
+  email        String?
+  id           String        @id @default(auto()) @map("_id") @db.ObjectId
+  name         String?
+  phone        String?
+  updatedAt    DateTime      @updatedAt
+}
+
+model Agent {
+  createdAt DateTime @default(now())
+  email     String?
+  id        String   @id @default(auto()) @map("_id") @db.ObjectId
+  name      String?
+  updatedAt DateTime @updatedAt
+}
+
+model Property {
+  address      String?
+  appointments Appointment[]
+  createdAt    DateTime      @default(now())
+  id           String        @id @default(auto()) @map("_id") @db.ObjectId
+  listingDate  DateTime?
+  price        Float?
+  updatedAt    DateTime      @updatedAt
+}
+
+model Appointment {
+  client      Client?   @relation(fields: [clientId], references: [id])
+  clientId    String?   @db.ObjectId
+  createdAt   DateTime  @default(now())
+  date        DateTime?
+  description String?
+  id          String    @id @default(auto()) @map("_id") @db.ObjectId
+  property    Property? @relation(fields: [propertyId], references: [id])
+  propertyId  String?   @db.ObjectId
+  updatedAt   DateTime  @updatedAt
+}
